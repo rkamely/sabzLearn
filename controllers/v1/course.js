@@ -85,15 +85,51 @@ exports.getCoursesByCategory = async (req, res) => {
 
 exports.getCourseDetails = async (req, res) => {
   const {href} = req.params;
-  const course = await courseModel.findOne({href}).populate('creator', '-password').populate('categoryId').lean();
+
+  const course = await courseModel.findOne({href})
+    .populate('creator', '-password')
+    .populate('categoryId')
+    .lean();
+
+  if (!course) {
+    return res.status(200).json({ message: "There aren't any course" });
+  }
+
   const sessions = await sessionModel.find({course: course._id}).lean()
-  const comments = await commentModel.find({course: course._id, isAccept: 1}).populate('creator', '-password').lean()
+
+  const comments = await commentModel.find({
+    course: course._id,
+    isAccept: 1
+  }).populate('creator', '-password')
+    .populate('course')
+    .lean()
+
   const usersCourse = await courseUserModel.find({course: course._id}).countDocuments().lean()
 
+  const mainCommentByAnswers = comments
+    .filter(comment => !comment.mainCommentId) // Filter main comments
+    .map(comment => ({
+      ...comment,
+      answeredComment: comments.filter(answerComment => String(answerComment.mainCommentId) === String(comment._id)),
+    }));
+
+
+
   if (course) {
-    return res.status(200).json({course, sessions, comments, usersCourse});
+    return res.status(200).json({course, sessions, comments: mainCommentByAnswers, usersCourse});
   } else {
     return res.status(200).json({message: "there aren't any course"});
   }
 }
 
+exports.getRelatedCourses = async (req, res) => {
+  const {href} = req.params;
+  const course = await courseModel.findOne({href}).lean();
+  const relatedCourses = await courseModel.find({categoryId: course.categoryId});
+  const filteredCourses = await relatedCourses.filter(item => item.href !== course.href)
+  if (filteredCourses) {
+    return res.status(200).json(filteredCourses);
+  } else {
+    return res.status(200).json({message: "there aren't any related course"});
+  }
+}
