@@ -6,10 +6,16 @@ const isAdmin = require('../../middlewares/isAdmin');
 const router = express.Router();
 
 router.route('/:id/answer').post(authMiddleware, isAdmin, controller.answerComment)
+
 router.route('/').post(authMiddleware, controller.createComment)
+
 router.route('/:id').delete(authMiddleware, isAdmin, controller.deleteComment)
+
 router.route('/:id/accept').put(authMiddleware, isAdmin, controller.acceptComment)
+
 router.route('/:id/reject').put(authMiddleware, isAdmin, controller.rejectComment)
+
+router.route('/').get(authMiddleware, isAdmin, controller.getAllComments)
 
 
 module.exports = router;

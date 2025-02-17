@@ -1,7 +1,6 @@
 const commentModel = require("./../../models/comment");
 
 
-
 exports.createComment = async (req, res) => {
   const {comment, course, score, mainCommentId} = req.body;
   const newComment = await commentModel.create({
@@ -15,6 +14,7 @@ exports.createComment = async (req, res) => {
 
   return res.status(200).json(newComment)
 }
+
 exports.deleteComment = async (req, res) => {
   const {id} = req.params;
   await commentModel.findByIdAndDelete({_id: id})
@@ -55,5 +55,39 @@ exports.answerComment = async (req, res) => {
   return res.status(200).json({message: "Comment created"})
 }
 
+exports.getAllComments = async (req, res) => {
 
+  try {
+    // Fetch all comments and populate necessary fields
+    const allComments = await commentModel.find()
+      .lean();
+
+    // Filter out comments that are not main comments
+    const filteredComments = allComments.filter(comment => !comment.mainCommentId);
+
+    // Add sub-comments to the corresponding main comments
+    filteredComments.forEach(filtered => {
+      // Initialize sub-comments for each main comment
+      filtered.subComments = [];
+
+      // Find the sub-comments for this main comment
+      allComments.forEach(comment => {
+        if (comment.mainCommentId && comment.mainCommentId.toString() === filtered._id.toString()) {
+          filtered.subComments.push(comment);
+        }
+      });
+    });
+
+    // If no comments are found, return an error response
+    if (filteredComments.length === 0) {
+      return res.status(402).json({ message: 'There are no comments' });
+    }
+
+    // Return the filtered comments with sub-comments
+    return res.status(200).json(filteredComments);
+  } catch (error) {
+    console.error('Error fetching comments:', error);
+    return res.status(500).json({ message: 'Server error' });
+  }
+}
 

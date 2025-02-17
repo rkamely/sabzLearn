@@ -92,7 +92,7 @@ exports.getCourseDetails = async (req, res) => {
     .lean();
 
   if (!course) {
-    return res.status(200).json({ message: "There aren't any course" });
+    return res.status(200).json({message: "There aren't any course"});
   }
 
   const sessions = await sessionModel.find({course: course._id}).lean()
@@ -106,13 +106,10 @@ exports.getCourseDetails = async (req, res) => {
 
   const usersCourse = await courseUserModel.find({course: course._id}).countDocuments().lean()
 
-  const mainCommentByAnswers = comments
-    .filter(comment => !comment.mainCommentId) // Filter main comments
-    .map(comment => ({
-      ...comment,
-      answeredComment: comments.filter(answerComment => String(answerComment.mainCommentId) === String(comment._id)),
-    }));
-
+  const mainCommentByAnswers = await comments.filter(comment => !comment.mainCommentId).map(comment => ({
+    ...comment,
+    answeredComment: comments.filter(answerComment => String(answerComment.mainCommentId) === String(comment._id)),
+  }));
 
 
   if (course) {
@@ -131,5 +128,46 @@ exports.getRelatedCourses = async (req, res) => {
     return res.status(200).json(filteredCourses);
   } else {
     return res.status(200).json({message: "there aren't any related course"});
+  }
+}
+
+exports.getPopularCourses = async (req, res) => {
+  const popularCourses = await courseModel.aggregate([
+    {
+      $lookup: {
+        from: 'comments', // Reference to the Comment collection
+        localField: '_id', // Local field (Course ID)
+        foreignField: 'course', // Foreign field (Course ID in Comment)
+        as: 'comments', // Name of the array field to store joined comments
+      },
+    },
+    {
+      $addFields: {
+        averageScore: {
+          $avg: '$comments.score', // Calculate the average score of the comments
+        },
+      },
+    },
+    {
+      $sort: { averageScore: -1 }, // Sort by average score in descending order
+    },
+    {
+      $project: {
+        title: 1, // Include course title
+        sessions:1,
+        averageScore: 1, // Include the calculated average score
+      },
+    },
+  ]);
+
+  // const coursesWithDetails = await courseModel.populate(popularCourses, [
+  //   { path: 'sessions' }, // Populate sessions virtual field
+  //   { path: 'comments' }, // Populate comments virtual field
+  // ]);
+
+  if (popularCourses) {
+    return res.status(200).json(popularCourses);
+  } else {
+    return res.status(400).json({message: "there aren't any courses"});
   }
 }

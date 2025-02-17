@@ -4,6 +4,10 @@ const userRouter = require('./routes/v1/user');
 const categoryRouter = require('./routes/v1/category');
 const courseRouter = require('./routes/v1/course');
 const commentRouter = require('./routes/v1/comment');
+const contactRouter = require('./routes/v1/contact');
+const searchRouter = require('./routes/v1/search');
+const notificationRouter = require('./routes/v1/notification');
+const voucherRouter = require('./routes/v1/voucher');
 
 const cors = require('cors');
 const path = require('path');
@@ -21,5 +25,11 @@ app.use('/v1/users', userRouter);
 app.use('/v1/category', categoryRouter);
 app.use('/v1/courses', courseRouter);
 app.use('/v1/comments', commentRouter);
+app.use('/v1/contact', contactRouter);
+app.use('/v1/search', searchRouter);
+app.use('/v1/notification', notificationRouter);
+app.use('/v1/voucher', voucherRouter);
+
+
 
 module.exports = app;

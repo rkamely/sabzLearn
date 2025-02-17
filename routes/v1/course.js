@@ -21,6 +21,7 @@ router.route('/register').post(authMiddleware, controller.registerCourse)
 
 router.route('/category/:href').get(controller.getCoursesByCategory)
 router.route('/relatedCourses/:href').get(controller.getRelatedCourses)
+router.route('/popular').get(controller.getPopularCourses)
 router.route('/:href/:sessionId').get(controller.getCourseSessions)
 router.route('/:href').get(controller.getCourseDetails)
 
