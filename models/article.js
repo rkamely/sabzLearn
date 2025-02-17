@@ -7,7 +7,7 @@ const schema = new mongoose.Schema(
     cover: {type: String, required: true},
     description: {type: String, required: true},
     body: {type: String, required: true},
-    publish: {type: Number, required: true},
+    publish: {type: Number, required: true, default: 0},
     href: {type: String, required: true},
     categoryId: {type: mongoose.Types.ObjectId, ref: "Category", required: true},
   }, {timestamps: true}
@@ -17,5 +17,6 @@ schema.virtual("comments", {
   localField: '_id',
   foreignField: 'article',
 })
+
 const model = mongoose.model('Article', schema);
 module.exports = model;

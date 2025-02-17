@@ -8,6 +8,7 @@ const contactRouter = require('./routes/v1/contact');
 const searchRouter = require('./routes/v1/search');
 const notificationRouter = require('./routes/v1/notification');
 const voucherRouter = require('./routes/v1/voucher');
+const articleRouter = require('./routes/v1/article');
 
 const cors = require('cors');
 const path = require('path');
@@ -17,6 +18,7 @@ const app = express();
 
 app.use(cors());
 app.use('/courses/covers', express.static(path.join(__dirname, 'public', 'courses', 'covers')));
+app.use('/articles/covers', express.static(path.join(__dirname, 'public', 'articles', 'covers')));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -29,6 +31,8 @@ app.use('/v1/contact', contactRouter);
 app.use('/v1/search', searchRouter);
 app.use('/v1/notification', notificationRouter);
 app.use('/v1/voucher', voucherRouter);
+app.use('/v1/article', articleRouter);
+
 
 
 

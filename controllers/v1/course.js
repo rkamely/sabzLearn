@@ -7,6 +7,9 @@ const commentModel = require("./../../models/comment");
 
 exports.createCourse = async (req, res) => {
   const {title, description, support, href, price, status, discount, categoryId} = req.body;
+  if (!req.file) {
+    return res.status(400).json({ message: "Cover image is required" });
+  }
   const course = await courseModel.create({
     title,
     description,
