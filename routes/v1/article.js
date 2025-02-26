@@ -7,15 +7,20 @@ const multerStorage = require("../../utils/uploader");
 
 const router = express.Router();
 
-
 router.route('/:href').get(controller.getOneArticle)
+
 router.route('/').get(controller.getAllArticle)
-router.route('/editArticle').put(authMiddleware, isAdmin, controller.editArticle)
+
+router.route('/:id').put(authMiddleware, isAdmin, multer({
+  storage: multerStorage,
+  limits: {fileSize: 1000000000}
+}).single("cover"), controller.editArticle)
+
 router.route('/').post(authMiddleware, isAdmin, multer({
   storage: multerStorage,
   limits: {fileSize: 1000000000}
 }).single("cover"), controller.createArticle)
-router.route('/:id').delete(authMiddleware, isAdmin, controller.removeArticle)
 
+router.route('/:id').delete(authMiddleware, isAdmin, controller.removeArticle)
 
 module.exports = router;

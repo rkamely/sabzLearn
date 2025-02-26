@@ -9,6 +9,9 @@ const searchRouter = require('./routes/v1/search');
 const notificationRouter = require('./routes/v1/notification');
 const voucherRouter = require('./routes/v1/voucher');
 const articleRouter = require('./routes/v1/article');
+const orderRouter = require('./routes/v1/order');
+const ticketRouter = require('./routes/v1/ticket');
+const menuRouter = require('./routes/v1/menu');
 
 const cors = require('cors');
 const path = require('path');
@@ -32,6 +35,11 @@ app.use('/v1/search', searchRouter);
 app.use('/v1/notification', notificationRouter);
 app.use('/v1/voucher', voucherRouter);
 app.use('/v1/article', articleRouter);
+app.use('/v1/orders', orderRouter);
+app.use('/v1/ticket', ticketRouter);
+app.use('/v1/menu', menuRouter);
+
+
 
 
 
