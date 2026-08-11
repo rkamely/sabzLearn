@@ -7,6 +7,7 @@ const router = express.Router();
 
 
 router.route('/').get(authMiddleware, isAdminMiddleware,controller.getUsers)
+router.route('/profileInfo').get(authMiddleware,controller.profileInfo).put(authMiddleware,controller.updateProfile)
 router.route('/:id').delete(authMiddleware, isAdminMiddleware,controller.getUsers)
 router.route('/updateUser').put(authMiddleware,controller.updateUser)
 router.route('/changeRole/:id').put(authMiddleware, isAdminMiddleware,controller.changeRole)

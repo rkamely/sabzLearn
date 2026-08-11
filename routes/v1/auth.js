@@ -4,6 +4,7 @@ const router = express.Router();
 
 
 router.post('/register',controller.register)
+router.post('/verify-otp',controller.verifyOtp)
 router.post('/login',controller.login)
 router.get('/me',controller.getMe)
 

@@ -13,7 +13,6 @@ module.exports = async (req, res, next) => {
   try {
     const jwtPayload = jwt.verify(token, process.env.JWT_SECRET);
     const user = await userModel.findById(jwtPayload.id).lean()
-    Reflect.deleteProperty(user, 'password')
     req.user = user
     next()
   } catch (err) {
